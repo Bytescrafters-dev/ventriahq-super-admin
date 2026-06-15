@@ -35,16 +35,27 @@ const navMain = [
     collapsible: false,
     items: [],
   },
-  // {
-  //   title: "Product Categories",
-  //   url: "/product-categories",
-  //   icon: IconListDetails,
-  //   collapsible: true,
-  //   items: [
-  //     { title: "View Product Categories", url: "/product-categories" },
-  //     { title: "Add Product Category", url: "/product-categories/create" },
-  //   ],
-  // },
+  {
+    title: "Plans & packages",
+    url: "/price-plans",
+    icon: IconTopologyStar3,
+    collapsible: true,
+    items: [
+      { title: "View Plans", url: "/price-plans" },
+      { title: "Add New Plan", url: "/price-plans/create" },
+    ],
+  },
+
+  {
+    title: "Tenants",
+    url: "/tenants",
+    icon: IconUsers,
+    collapsible: true,
+    items: [
+      { title: "View Tenants", url: "/tenants" },
+      { title: "Add New Tenant", url: "/tenants/create" },
+    ],
+  },
   // {
   //   title: "Products",
   //   url: "/products",
