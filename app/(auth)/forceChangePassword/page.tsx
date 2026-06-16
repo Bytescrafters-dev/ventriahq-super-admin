@@ -5,7 +5,7 @@ import { ForcePasswordChangeForm } from "@/components/auth/force-change-password
 export default async function ForceChangePasswordPage({
   searchParams,
 }: {
-  searchParams: { next?: string };
+  searchParams: Promise<{ next?: string }>;
 }) {
   const { next = "/" } = await searchParams;
 
