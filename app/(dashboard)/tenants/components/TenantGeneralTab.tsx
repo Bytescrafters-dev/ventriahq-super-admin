@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTenant, useUpdateTenant } from "@/hooks/useTenants";
 import { Loader2Icon } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { DatePicker } from "@/components/common/DatePicker";
 import {
   Select,
@@ -22,8 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  TENANT_PLAN,
-  TENANT_PLAN_OPTIONS,
   TENANT_STATUS,
   TENANT_STATUS_OPTIONS,
 } from "@/types/tenant";
@@ -71,7 +68,7 @@ export const TenantGeneralTab = ({ tenantId }: TenantGeneralTabProps) => {
       setTrialEndDate(data.trialEndsAt ?? format(new Date(), "yyyy-MM-dd"));
       setStatus(data.status);
     }
-  }, [data]);
+  }, [data, reset]);
 
   const onSubmit = async (values: Form) => {
     const { firstName, lastName, companyName, phone, notes } = values;

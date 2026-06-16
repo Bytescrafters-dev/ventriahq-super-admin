@@ -14,9 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { Edit, Trash2, Upload } from "lucide-react";
-import { toast } from "sonner";
-import { format, parse, isValid } from "date-fns";
+import { Edit, Trash2 } from "lucide-react";
 import { useTenants } from "@/hooks/useTenants";
 import { TENANT_PLAN, TENANT_STATUS } from "@/types/tenant";
 import { TenantsFilters } from "./components/TenantsFilter";
@@ -133,12 +131,9 @@ function TenantsContent() {
                   </TableCell>
                   <TableCell>{tenant.phone || "-"}</TableCell>
                   <TableCell className="text-muted-foreground">
-                    {tenant.plan ? (
-                      <Badge
-                        variant="outline"
-                        className={`text-xs capitalize ${getCampaignStyles(tenant.plan)}`}
-                      >
-                        {tenant.plan}
+                    {tenant.currentPlanName ? (
+                      <Badge variant="outline" className={`text-xs capitalize`}>
+                        {tenant.currentPlanName}
                       </Badge>
                     ) : (
                       "—"

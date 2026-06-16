@@ -13,7 +13,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateTenant } from "@/hooks/useTenants";
 import { Loader2Icon } from "lucide-react";
 import PasswordInput from "@/components/common/PasswordInput";
-import { Badge } from "@/components/ui/badge";
 import { DatePicker } from "@/components/common/DatePicker";
 import {
   Select,
@@ -23,8 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  TENANT_PLAN,
-  TENANT_PLAN_OPTIONS,
   TENANT_STATUS,
   TENANT_STATUS_OPTIONS,
 } from "@/types/tenant";
@@ -62,7 +59,6 @@ const CreateTenant = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<Form>({
     resolver: zodResolver(schema),

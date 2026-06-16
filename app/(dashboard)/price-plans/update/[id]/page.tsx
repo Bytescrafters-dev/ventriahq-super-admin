@@ -56,8 +56,6 @@ const UpdatePricePlan = () => {
     register,
     handleSubmit,
     control,
-    setValue,
-    watch,
     reset,
     formState: { errors },
   } = useForm<FormValues>({
@@ -73,7 +71,7 @@ const UpdatePricePlan = () => {
         ).map(([key, value]) => ({ key, value: String(value) })),
       });
     }
-  }, [data]);
+  }, [data, reset]);
 
   const { fields, remove } = useFieldArray({
     control,
@@ -81,7 +79,7 @@ const UpdatePricePlan = () => {
   });
 
   const onSubmit = async (values: FormValues) => {
-    const features = values.features.reduce<Record<string, any>>(
+    const features = values.features.reduce<Record<string, string | number>>(
       (acc, { key, value }) => {
         const num = Number(value);
         acc[key] = isNaN(num) ? value : num;

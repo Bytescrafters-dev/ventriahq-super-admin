@@ -13,17 +13,14 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 
-async function getCroppedImg(
-  imageSrc: string,
-  crop: any,
-  zoom: number,
-): Promise<Blob> {
+type CropArea = { x: number; y: number; width: number; height: number };
+
+async function getCroppedImg(imageSrc: string, crop: CropArea): Promise<Blob> {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
 
   const naturalWidth = image.naturalWidth;
-  const naturalHeight = image.naturalHeight;
 
   const scale = naturalWidth / image.width;
 
@@ -82,11 +79,16 @@ export function AvatarUploader({
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<CropArea | null>(
+    null,
+  );
 
-  const onCropComplete = useCallback((_: any, croppedAreaPixels: any) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  const onCropComplete = useCallback(
+    (_: CropArea, croppedAreaPixels: CropArea) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    [],
+  );
 
   async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -99,7 +101,7 @@ export function AvatarUploader({
   async function uploadCropped() {
     if (!imageSrc || !croppedAreaPixels) return;
 
-    const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels, zoom);
+    const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
     const formData = new FormData();
     formData.append("avatar", croppedBlob, "avatar.jpg");
 
@@ -121,7 +123,7 @@ export function AvatarUploader({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>Change Avatar</DialogTitle>
         </DialogHeader>
@@ -147,7 +149,7 @@ export function AvatarUploader({
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="relative w-full h-[300px] bg-muted overflow-hidden rounded-md">
+            <div className="relative w-full h-75 bg-muted overflow-hidden rounded-md">
               <Cropper
                 image={imageSrc}
                 crop={crop}

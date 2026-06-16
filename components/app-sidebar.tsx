@@ -2,15 +2,8 @@
 
 import React from "react";
 import {
-  IconChartBar,
   IconDashboard,
-  IconFolder,
-  IconListDetails,
   IconUsers,
-  IconBallVolleyball,
-  IconUsersPlus,
-  IconPackages,
-  IconShoppingCart,
   IconTopologyStar3,
 } from "@tabler/icons-react";
 

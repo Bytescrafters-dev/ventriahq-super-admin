@@ -15,13 +15,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
-import { toast } from "sonner";
+
 import { PricePlanFilters } from "./components/PricePlanFilter";
 import { IconPlus } from "@tabler/icons-react";
 import { usePricePlans } from "@/hooks/usePricePlan";
 import { BILLING_CYCLE } from "@/types/pricePlan";
 
-export const getCampaignStyles = (campaign: any) => {
+export const getCampaignStyles = (campaign: string) => {
   switch (campaign) {
     // case LEAD_CAMPAIGN.FACEBOOK:
     //   return "bg-blue-800 text-white";

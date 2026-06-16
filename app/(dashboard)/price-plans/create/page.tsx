@@ -4,7 +4,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, ArrowLeft } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useCreatePricePlan } from "@/hooks/usePricePlan";
@@ -77,13 +77,13 @@ const CreatePricePlan = () => {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, remove } = useFieldArray({
     control,
     name: "features",
   });
 
   const onSubmit = async (values: FormValues) => {
-    const features = values.features.reduce<Record<string, any>>(
+    const features = values.features.reduce<Record<string, string | number>>(
       (acc, { key, value }) => {
         const num = Number(value);
         acc[key] = isNaN(num) ? value : num;
