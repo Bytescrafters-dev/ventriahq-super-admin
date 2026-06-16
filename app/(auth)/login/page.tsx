@@ -5,7 +5,7 @@ import Image from "next/image";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: { next?: string };
+  searchParams: Promise<{ next?: string }>;
 }) {
   const { next = "/" } = await searchParams;
 
