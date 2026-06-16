@@ -21,25 +21,6 @@ import { IconPlus } from "@tabler/icons-react";
 import { usePricePlans } from "@/hooks/usePricePlan";
 import { BILLING_CYCLE } from "@/types/pricePlan";
 
-export const getCampaignStyles = (campaign: string) => {
-  switch (campaign) {
-    // case LEAD_CAMPAIGN.FACEBOOK:
-    //   return "bg-blue-800 text-white";
-    // case LEAD_CAMPAIGN.INSTAGRAM:
-    //   return "bg-pink-800 text-white";
-    // case LEAD_CAMPAIGN.TIKTOK:
-    //   return "bg-black text-white";
-    // case LEAD_CAMPAIGN.WHATSAPP:
-    //   return "bg-green-800 text-white";
-    // case LEAD_CAMPAIGN.GOOGLE:
-    //   return "bg-gray-100 text-red-800";
-    // case LEAD_CAMPAIGN.OTHER:
-    //   return "bg-gray-100 text-gray-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
-
 export const getBillingCycleName = (billingCyle: BILLING_CYCLE) => {
   switch (billingCyle) {
     case BILLING_CYCLE.MONTHLY:

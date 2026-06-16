@@ -16,28 +16,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
 import { useTenants } from "@/hooks/useTenants";
-import { TENANT_PLAN, TENANT_STATUS } from "@/types/tenant";
+import { TENANT_STATUS } from "@/types/tenant";
 import { TenantsFilters } from "./components/TenantsFilter";
 import { IconPlus } from "@tabler/icons-react";
-
-export const getCampaignStyles = (campaign: TENANT_PLAN) => {
-  switch (campaign) {
-    // case LEAD_CAMPAIGN.FACEBOOK:
-    //   return "bg-blue-800 text-white";
-    // case LEAD_CAMPAIGN.INSTAGRAM:
-    //   return "bg-pink-800 text-white";
-    // case LEAD_CAMPAIGN.TIKTOK:
-    //   return "bg-black text-white";
-    // case LEAD_CAMPAIGN.WHATSAPP:
-    //   return "bg-green-800 text-white";
-    // case LEAD_CAMPAIGN.GOOGLE:
-    //   return "bg-gray-100 text-red-800";
-    // case LEAD_CAMPAIGN.OTHER:
-    //   return "bg-gray-100 text-gray-800";
-    default:
-      return "bg-gray-100 text-gray-800";
-  }
-};
 
 export const getStatusStyles = (status: string) => {
   switch (status) {
