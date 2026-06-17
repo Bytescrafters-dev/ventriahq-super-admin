@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 const EnvSchema = z.object({
-  BACKEND_URL: z.string().url({
-    message: "BACKEND_URL must be a valid URL (e.g. https://api.example.com)",
-  }),
+  BACKEND_URL: z.string().min(1, "BACKEND_URL is required").transform((v) => v.trim().replace(/\/$/, "")),
   JWT_COOKIE_NAME: z.string().min(1).default("admin_jwt"),
   REFRESH_COOKIE_NAME: z.string().min(1).default("admin_refresh"),
   COOKIE_DOMAIN: z.string().optional(),
