@@ -1,9 +1,12 @@
 import { z } from "zod";
 
 const EnvSchema = z.object({
-  BACKEND_URL: z.string().min(1, "BACKEND_URL is required").transform((v) => v.trim().replace(/\/$/, "")),
-  JWT_COOKIE_NAME: z.string().min(1).default("admin_jwt"),
-  REFRESH_COOKIE_NAME: z.string().min(1).default("admin_refresh"),
+  BACKEND_URL: z
+    .string()
+    .min(1, "BACKEND_URL is required")
+    .transform((v) => v.trim().replace(/\/$/, "")),
+  JWT_COOKIE_NAME: z.string().min(1).default("dev_super_admin_jwt"),
+  REFRESH_COOKIE_NAME: z.string().min(1).default("dev_super_admin_refresh"),
   COOKIE_DOMAIN: z.string().optional(),
 });
 

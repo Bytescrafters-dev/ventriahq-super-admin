@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-const JWT_COOKIE = process.env.JWT_COOKIE_NAME ?? "admin_jwt";
+const JWT_COOKIE = process.env.JWT_COOKIE_NAME ?? "dev_super_admin_jwt";
 const PROTECTED = ["/"];
 
 export const middleware = (req: NextRequest) => {

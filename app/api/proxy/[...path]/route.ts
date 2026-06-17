@@ -6,7 +6,7 @@ import {
 
 type RefreshResult =
   | { ok: false }
-  | { ok: true; newAccess: string; setCookies: string[] };
+  | { ok: true; newAccess: string; newRefresh: string };
 
 let pendingRefresh: Promise<RefreshResult> | null = null;
 
@@ -20,8 +20,9 @@ function getRefresh(req: NextRequest): Promise<RefreshResult> {
       if (!r.ok) return { ok: false };
       const data = await r.json();
       const newAccess = data?.access || data?.accessToken;
-      const setCookies = r.headers.getSetCookie?.() ?? [];
-      return { ok: true, newAccess, setCookies };
+      const newRefresh = data?.refresh;
+      if (!newAccess || !newRefresh) return { ok: false };
+      return { ok: true, newAccess, newRefresh };
     })().finally(() => {
       pendingRefresh = null;
     });
@@ -97,9 +98,13 @@ async function handle(req: NextRequest, pathArr: string[]) {
   }
 
   const headers = new Headers(res.headers);
-  for (const cookie of result.setCookies) {
-    headers.append("set-cookie", cookie);
-  }
+  const isProd = process.env.NODE_ENV === "production";
+  const domain = process.env.COOKIE_DOMAIN ? `; Domain=${process.env.COOKIE_DOMAIN}` : "";
+  const secure = isProd ? "; Secure" : "";
+  const jwtName = process.env.JWT_COOKIE_NAME ?? "dev_super_admin_jwt";
+  const refreshName = process.env.REFRESH_COOKIE_NAME ?? "dev_super_admin_refresh";
+  headers.append("set-cookie", `${jwtName}=${result.newAccess}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${10 * 60 * 60}${secure}${domain}`);
+  headers.append("set-cookie", `${refreshName}=${result.newRefresh}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 24 * 30}${secure}${domain}`);
   return new NextResponse(res.body, {
     status: res.status,
     statusText: res.statusText,
