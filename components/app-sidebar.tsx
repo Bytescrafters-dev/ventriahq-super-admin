@@ -5,6 +5,8 @@ import {
   IconDashboard,
   IconUsers,
   IconTopologyStar3,
+  IconBallVolleyball,
+  IconReceipt,
 } from "@tabler/icons-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -49,16 +51,16 @@ const navMain = [
       { title: "Add New Tenant", url: "/tenants/create" },
     ],
   },
-  // {
-  //   title: "Products",
-  //   url: "/products",
-  //   icon: IconBallVolleyball,
-  //   collapsible: true,
-  //   items: [
-  //     { title: "View Products", url: "/products" },
-  //     { title: "Add Product", url: "/products/create" },
-  //   ],
-  // },
+  {
+    title: "Invoices",
+    url: "/invoices",
+    icon: IconReceipt,
+    collapsible: true,
+    items: [
+      { title: "View Invoices", url: "/invoices" },
+      { title: "Create Invoice", url: "/products/create" },
+    ],
+  },
   // {
   //   title: "Inventory",
   //   url: "/purchase-orders",

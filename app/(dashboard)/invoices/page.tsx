@@ -15,10 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
-import { useTenants } from "@/hooks/useTenants";
 import { TENANT_STATUS } from "@/types/tenant";
-import { TenantsFilters } from "./components/TenantsFilter";
+import { InvoicesFilters } from "./components/InvoicesFilter";
 import { IconPlus } from "@tabler/icons-react";
+import { useInvoices } from "@/hooks/useInvoice";
+import { format, parse, isValid } from "date-fns";
 
 export const getStatusStyles = (status: string) => {
   switch (status) {
@@ -37,7 +38,7 @@ export const getStatusStyles = (status: string) => {
 
 const LIMIT = 10;
 
-function TenantsContent() {
+function InvoicesContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -45,14 +46,27 @@ function TenantsContent() {
   const page = Math.max(1, Number(searchParams?.get("page") ?? "1"));
   const q = searchParams?.get("q") ?? undefined;
   const status = searchParams?.get("status") ?? undefined;
-  const plan = searchParams?.get("plan") ?? undefined;
+  const dateType = (searchParams?.get("dateType") ?? "createdAt") as
+    | "createdAt"
+    | "dueDate";
 
-  const { data, isLoading, isError } = useTenants({
+  const parseDateParam = (str: string | null): Date | undefined => {
+    if (!str) return undefined;
+    const d = parse(str, "yyyy-MM-dd", new Date());
+    return isValid(d) ? d : undefined;
+  };
+
+  const dateFrom = parseDateParam(searchParams?.get("dateFrom") ?? "");
+  const dateTo = parseDateParam(searchParams?.get("dateTo") ?? "");
+
+  const { data, isLoading, isError } = useInvoices({
     page,
     limit: LIMIT,
     q,
     status,
-    plan,
+    dateType,
+    dateFrom,
+    dateTo,
   });
 
   const setPage = (next: number) => {
@@ -64,7 +78,7 @@ function TenantsContent() {
   if (isError) {
     return (
       <div className="text-destructive text-sm py-8 text-center">
-        Failed to load tenants.
+        Failed to load invoices.
       </div>
     );
   }
@@ -75,12 +89,15 @@ function TenantsContent() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="font-bold">Company</TableHead>
-              <TableHead className="font-bold">Name</TableHead>
-              <TableHead className="font-bold">Email</TableHead>
+              <TableHead className="font-bold">Invoice Number</TableHead>
+              <TableHead className="font-bold">Company Name</TableHead>
+              <TableHead className="font-bold">Contact Name</TableHead>
               <TableHead className="font-bold">Phone</TableHead>
-              <TableHead className="font-bold">Plan</TableHead>
-              <TableHead className="font-bold">Created By</TableHead>
+              <TableHead className="font-bold">Email</TableHead>
+              <TableHead className="font-bold">Subscription</TableHead>
+              <TableHead className="font-bold">Amount</TableHead>
+              <TableHead className="font-bold">Created Date</TableHead>
+              <TableHead className="font-bold">Due Date</TableHead>
               <TableHead className="font-bold">Status</TableHead>
               <TableHead className="font-bold text-center">Actions</TableHead>
             </TableRow>
@@ -89,7 +106,7 @@ function TenantsContent() {
             {isLoading ? (
               Array.from({ length: LIMIT }).map((_, i) => (
                 <TableRow key={i}>
-                  {Array.from({ length: 8 }).map((_, j) => (
+                  {Array.from({ length: 11 }).map((_, j) => (
                     <TableCell key={j}>
                       <Skeleton className="h-4 w-full" />
                     </TableCell>
@@ -97,44 +114,46 @@ function TenantsContent() {
                 </TableRow>
               ))
             ) : data?.data?.length ? (
-              data.data.map((tenant) => (
-                <TableRow key={tenant.id}>
+              data.data.map((invoice) => (
+                <TableRow key={invoice.id}>
                   <TableCell className="font-medium">
-                    <Link href={`/tenants/update/${tenant.id}`}>
-                      {tenant.companyName}
+                    <Link href={`/invoices/update/${invoice.id}`}>
+                      {invoice.invoiceNumber}
                     </Link>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {`${tenant.firstName} ${tenant.lastName}`}
+                    {invoice.tenant.companyName}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {tenant.email || "—"}
+                    {`${invoice.tenant.firstName} ${invoice.tenant.lastName}`}
                   </TableCell>
-                  <TableCell>{tenant.phone || "-"}</TableCell>
+                  <TableCell>{invoice.tenant.phone || "-"}</TableCell>
+                  <TableCell>{invoice.tenant.email || "-"}</TableCell>
                   <TableCell className="text-muted-foreground">
-                    {tenant.currentPlanName ? (
-                      <Badge variant="outline" className={`text-xs capitalize`}>
-                        {tenant.currentPlanName}
-                      </Badge>
-                    ) : (
-                      "—"
-                    )}
+                    {invoice.subscription.planPrice.planName || "-"}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {tenant?.createdBy?.firstName || "-"}
+                    {`${invoice.subscription.planPrice.currency} ${invoice.subscription.planPrice.amount}` ||
+                      "-"}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {format(new Date(invoice.createdAt), "yyyy-MM-dd")}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {format(new Date(invoice.dueDate), "yyyy-MM-dd")}
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className={`text-xs capitalize ${getStatusStyles(tenant.status)}`}
+                      className={`text-xs capitalize ${getStatusStyles(invoice.status)}`}
                     >
-                      {tenant.status}
+                      {invoice.status}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2 justify-center items-center">
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/tenants/update/${tenant.id}`}>
+                        <Link href={`/invoices/update/${invoice.id}`}>
                           <Edit className="h-4 w-4" />
                         </Link>
                       </Button>
@@ -148,7 +167,7 @@ function TenantsContent() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={9}
+                  colSpan={11}
                   className="text-center text-muted-foreground py-10"
                 >
                   No tenants found
@@ -189,15 +208,15 @@ function TenantsContent() {
   );
 }
 
-export default function TenantsPage() {
+export default function InvoicesPage() {
   return (
     <div className="p-4 md:p-8">
       <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Tenants</h1>
+        <h1 className="text-2xl font-bold">Invoices</h1>
         <Button asChild size="sm">
-          <Link href="/tenants/create">
+          <Link href="/invoices/create">
             <IconPlus className="mr-2" />
-            Create Tenant
+            Create Invoice
           </Link>
         </Button>
       </div>
@@ -206,13 +225,13 @@ export default function TenantsPage() {
         <Card>
           <CardContent className="pt-4">
             <Suspense fallback={<Skeleton className="h-20 w-full" />}>
-              <TenantsFilters />
+              <InvoicesFilters />
             </Suspense>
           </CardContent>
         </Card>
 
         <Suspense fallback={<Skeleton className="h-64 w-full rounded-lg" />}>
-          <TenantsContent />
+          <InvoicesContent />
         </Suspense>
       </div>
     </div>

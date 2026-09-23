@@ -20,10 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  TENANT_STATUS,
-  TENANT_STATUS_OPTIONS,
-} from "@/types/tenant";
+import { TENANT_STATUS, TENANT_STATUS_OPTIONS } from "@/types/tenant";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -245,7 +242,7 @@ export const TenantGeneralTab = ({ tenantId }: TenantGeneralTabProps) => {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.push("/suppliers")}
+                onClick={() => router.push("/tenants")}
               >
                 Cancel
               </Button>

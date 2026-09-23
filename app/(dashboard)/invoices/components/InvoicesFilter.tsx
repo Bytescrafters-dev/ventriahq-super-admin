@@ -12,23 +12,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, X } from "lucide-react";
-import { TENANT_STATUS, TENANT_PLAN } from "@/types/tenant";
+import { INVOICE_STATUS } from "@/types/invoice";
+import { DatePicker } from "@/components/common/DatePicker";
+import { format, parse, isValid } from "date-fns";
 
 const STATUS_LABELS: Record<string, string> = {
   PENDING: "Pending",
-  ACTIVE: "Active",
-  SUSPENDED: "Suspended",
-  CANCELED: "Canceled",
+  PAST_DUE: "Past due",
+  PAID: "Paid",
+  VOID: "Void",
 };
 
-const PLAN_LABELS: Record<string, string> = {
-  TRIAL: "Trial",
-  BASIC: "Basic",
-  PLUS: "Plus",
-  ENTERPRISE: "Enterprise",
-};
+function parseDate(str: string | null): Date | undefined {
+  if (!str) return undefined;
+  const d = parse(str, "yyyy-MM-dd", new Date());
+  return isValid(d) ? d : undefined;
+}
 
-export const TenantsFilters = () => {
+export const InvoicesFilters = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -42,9 +43,16 @@ export const TenantsFilters = () => {
   const isFirstRender = useRef(true);
 
   const status = searchParams?.get("status") ?? "";
-  const plan = searchParams?.get("plan") ?? "";
+  const dateType = searchParams?.get("dateType") ?? "createdAt";
+  const dateFrom = parseDate(searchParams?.get("dateFrom") ?? "");
+  const dateTo = parseDate(searchParams?.get("dateTo") ?? "");
 
-  const hasActiveFilters = !!(searchParams?.get("q") || status || plan);
+  const hasActiveFilters = !!(
+    searchParams?.get("q") ||
+    status ||
+    searchParams?.get("dateFrom") ||
+    searchParams?.get("dateTo")
+  );
 
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParamsRef?.current?.toString());
@@ -104,7 +112,7 @@ export const TenantsFilters = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="_all">All Status</SelectItem>
-            {Object.values(TENANT_STATUS).map((s) => (
+            {Object.values(INVOICE_STATUS).map((s) => (
               <SelectItem key={s} value={s}>
                 {STATUS_LABELS[s] ?? s}
               </SelectItem>
@@ -113,21 +121,39 @@ export const TenantsFilters = () => {
         </Select>
 
         <Select
-          value={plan}
-          onValueChange={(v) => updateParams({ plan: v === "_all" ? null : v })}
+          value={dateType}
+          onValueChange={(v) =>
+            updateParams({ dateType: v, dateFrom: null, dateTo: null })
+          }
         >
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="All Sources" />
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="_all">All Sources</SelectItem>
-            {Object.values(TENANT_PLAN).map((c) => (
-              <SelectItem key={c} value={c}>
-                {PLAN_LABELS[c] ?? c}
-              </SelectItem>
-            ))}
+            <SelectItem value="createdAt">Created At</SelectItem>
+            <SelectItem value="dueDate">Due Date</SelectItem>
           </SelectContent>
         </Select>
+
+        <DatePicker
+          value={dateFrom}
+          onChange={(d) =>
+            updateParams({ dateFrom: d ? format(d, "yyyy-MM-dd") : null })
+          }
+          placeholder="From"
+          className="w-48"
+          disabled={(date) => (dateTo ? date > dateTo : false)}
+        />
+
+        <DatePicker
+          value={dateTo}
+          onChange={(d) =>
+            updateParams({ dateTo: d ? format(d, "yyyy-MM-dd") : null })
+          }
+          placeholder="To"
+          className="w-48"
+          disabled={(date) => (dateFrom ? date < dateFrom : false)}
+        />
 
         {hasActiveFilters && (
           <Button

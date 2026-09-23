@@ -3,10 +3,11 @@ import { useParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TenantGeneralTab } from "../../components/TenantGeneralTab";
 import { TenantSubscriptionTab } from "../../components/TenantSubscriptionTab";
+import { TenantInvoiceTab } from "../../components/TenantInvoiceTab";
 
 const UpdateTenant = () => {
   const params = useParams();
-  const tenantId = params.id as string;
+  const tenantId = params?.id as string;
 
   return (
     <div className="p-4 md:p-8">
@@ -29,7 +30,9 @@ const UpdateTenant = () => {
           <TenantSubscriptionTab tenantId={tenantId} />
         </TabsContent>
 
-        <TabsContent value="invoices" />
+        <TabsContent value="invoices">
+          <TenantInvoiceTab tenantId={tenantId} />
+        </TabsContent>
       </Tabs>
     </div>
   );
